@@ -1,3 +1,4 @@
+// 注入位置：page-frame
 setTimeout(() => {
   const topWindow = window.top;
   const document = topWindow.document;
