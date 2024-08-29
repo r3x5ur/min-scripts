@@ -1,17 +1,17 @@
-// 注入到程序入口处，即可生效
-const oriCreateRewardedVideoAd = wx.createRewardedVideoAd
-Object.defineProperty(wx, 'createRewardedVideoAd', {
-  value: function (config) {
-    const ad = oriCreateRewardedVideoAd(config)
-    const _oriOnClose = ad.onClose
-      ad.onClose = function (callback) {
-        ad._callback = callback
-        _oriOnClose(callback)
-      }
-      ad.show = function () {
-        typeof ad._callback === 'function' && ad._callback({isEnded: true})
-        return Promise.resolve()
-      }
-      return ad
-  },
-})
+// 注入到程序入口处，即可生效， 究极无敌版（通杀所有小游戏）
+const ad = wx.createRewardedVideoAd()
+ad.onLoad = fn => {
+  ad.__onLoad = fn
+}
+ad.onClose = fn => {
+  ad.__onClose = fn
+}
+ad.load = () => {
+  ad.__onLoad && ad.__onLoad()
+  return Promise.resolve()
+}
+ad.show = () => {
+  ad.__onClose && ad.__onClose({isEnded: true})
+  return Promise.resolve()
+}
+ad.destroy = Boolean
