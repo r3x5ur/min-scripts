@@ -46,3 +46,21 @@ search = function(stirng) {
 	}
 	console.info('done');
 }
+
+function readStdString(addr) {
+	if (addr.value) addr = addr.value
+	const lpStr = addr + 0xc
+	const size = new Uint32Array(memories[0].buffer.slice(addr + 8, lpStr))[0]
+	const utf8Arr = new Uint16Array(memories[0].buffer.slice(lpStr, lpStr + size * 2))
+	return Array.from(utf8Arr).map(c=>String.fromCodePoint(c)).join('')
+}
+function writeStdString(addr, str) {
+    if (addr.value) addr = addr.value;
+	const lpStr = addr + 0xc
+    const utf16Arr = Array.from(str).map(c => c.codePointAt(0));
+	const size = utf16Arr.length
+	new Uint32Array(memories[0].buffer)[(addr + 8) / 4] = size
+	const utf8Arr = new Uint16Array(memories[0].buffer)
+	utf16Arr.forEach((c,i) => utf8Arr[lpStr / 2 + i] = c)
+}
+
